@@ -1,0 +1,122 @@
+.ll-stat-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  padding: 23px;
+  background: #ffffff;
+  border: 1px solid #e9eaf2;
+  border-radius: 19px;
+  box-shadow: 0 5px 20px rgba(31, 41, 80, 0.045);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ll-stat-card::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  right: -35px;
+  bottom: -45px;
+  border-radius: 50%;
+  background: var(--stat-glow);
+  opacity: 0.12;
+  filter: blur(4px);
+}
+
+.ll-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 13px 30px rgba(31, 41, 80, 0.09);
+}
+
+.ll-stat-total {
+  --stat-color: #7257e8;
+  --stat-glow: #7257e8;
+}
+
+.ll-stat-active {
+  --stat-color: #16a779;
+  --stat-glow: #16a779;
+}
+
+.ll-stat-expiring {
+  --stat-color: #e99a31;
+  --stat-glow: #e99a31;
+}
+
+.ll-stat-expired {
+  --stat-color: #e45e70;
+  --stat-glow: #e45e70;
+}
+
+.ll-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 23px;
+}
+
+.ll-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 47px;
+  height: 47px;
+  color: var(--stat-color);
+  background: color-mix(in srgb, var(--stat-color) 11%, white);
+  border-radius: 14px;
+}
+
+.ll-stat-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ll-stat-change.positive {
+  color: #13976c;
+  background: #e9f8f1;
+}
+
+.ll-stat-change.negative {
+  color: #dc5368;
+  background: #fff0f2;
+}
+
+.ll-stat-title {
+  margin: 0 0 8px;
+  color: #777e94;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ll-stat-content h2 {
+  margin: 0;
+  color: #20243a;
+  font-size: 31px;
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+
+.ll-stat-subtitle {
+  margin: 8px 0 0;
+  color: #a0a5b5;
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  .ll-stat-card {
+    padding: 17px;
+  }
+
+  .ll-stat-content h2 {
+    font-size: 26px;
+  }
+
+  .ll-stat-top {
+    margin-bottom: 17px;
+  }
+}

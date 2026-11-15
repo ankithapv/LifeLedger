@@ -1,0 +1,130 @@
+.ll-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(12, 18, 38, 0.62);
+  backdrop-filter: blur(7px);
+}
+
+.ll-confirm-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 32px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #eaecf5;
+  border-radius: 22px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+  animation: ll-dialog-appear 0.2s ease;
+}
+
+.ll-dialog-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  padding: 7px;
+  border: none;
+  border-radius: 8px;
+  background: #f2f4f7;
+  color: #667085;
+  cursor: pointer;
+}
+
+.ll-dialog-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+}
+
+.ll-dialog-icon.danger {
+  background: #fff0ed;
+  color: #e04f43;
+}
+
+.ll-dialog-icon.normal {
+  background: #eeecff;
+  color: #6658e8;
+}
+
+.ll-confirm-dialog h2 {
+  margin: 0 0 10px;
+  color: #202944;
+  font-size: 21px;
+}
+
+.ll-confirm-dialog p {
+  margin: 0;
+  color: #858da3;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ll-dialog-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 27px;
+}
+
+.ll-dialog-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ll-dialog-cancel {
+  border: 1px solid #e4e7ec;
+  background: white;
+  color: #475467;
+}
+
+.ll-dialog-cancel:hover {
+  background: #f8f9fc;
+}
+
+.ll-dialog-confirm {
+  border: none;
+  color: white;
+}
+
+.ll-dialog-confirm.danger {
+  background: #e04f43;
+}
+
+.ll-dialog-confirm.normal {
+  background: linear-gradient(135deg, #6658e8, #4778e9);
+}
+
+.ll-dialog-actions button:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes ll-dialog-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .ll-confirm-dialog {
+    padding: 27px 20px;
+  }
+}

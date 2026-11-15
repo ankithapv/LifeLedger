@@ -1,0 +1,133 @@
+.ll-calendar-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e9eaf2;
+  border-left: 4px solid #7659e8;
+  border-radius: 13px;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ll-calendar-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px rgba(31, 41, 80, 0.08);
+}
+
+.ll-calendar-event.upcoming {
+  border-left-color: #398fe1;
+}
+
+.ll-calendar-event.expiring {
+  border-left-color: #e99a31;
+}
+
+.ll-calendar-event.expired {
+  border-left-color: #e45e70;
+}
+
+.ll-calendar-event.renewed {
+  border-left-color: #16a779;
+}
+
+.ll-calendar-event-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 39px;
+  height: 39px;
+  color: #7659e8;
+  background: #f1eeff;
+  border-radius: 11px;
+}
+
+.ll-calendar-event.upcoming .ll-calendar-event-icon {
+  color: #398fe1;
+  background: #eaf4ff;
+}
+
+.ll-calendar-event.expiring .ll-calendar-event-icon {
+  color: #d58a24;
+  background: #fff6e8;
+}
+
+.ll-calendar-event.expired .ll-calendar-event-icon {
+  color: #dc5368;
+  background: #fff0f2;
+}
+
+.ll-calendar-event.renewed .ll-calendar-event-icon {
+  color: #159b70;
+  background: #eaf8f2;
+}
+
+.ll-calendar-event-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ll-calendar-event-content h4 {
+  overflow: hidden;
+  margin: 1px 0 8px;
+  color: #30344a;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ll-calendar-event-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #858ba0;
+  font-size: 11px;
+}
+
+.ll-calendar-event-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  color: #705be7;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ll-calendar-event.upcoming .ll-calendar-event-status {
+  color: #398fe1;
+}
+
+.ll-calendar-event.expiring .ll-calendar-event-status {
+  color: #d58a24;
+}
+
+.ll-calendar-event.expired .ll-calendar-event-status {
+  color: #dc5368;
+}
+
+.ll-calendar-event.renewed .ll-calendar-event-status {
+  color: #159b70;
+}
+
+.ll-calendar-event-days {
+  margin-left: auto;
+  color: #858ba0;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .ll-calendar-event {
+    padding: 11px;
+  }
+
+  .ll-calendar-event-days {
+    margin-left: 0;
+  }
+}

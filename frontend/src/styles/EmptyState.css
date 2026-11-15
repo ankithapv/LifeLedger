@@ -1,0 +1,56 @@
+.ll-empty-state {
+  min-height: 260px;
+  padding: 35px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px dashed #d9dcef;
+  border-radius: 18px;
+}
+
+.ll-empty-icon {
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  color: #6658e8;
+  background: linear-gradient(135deg, #eeecff, #e8f5ff);
+  margin-bottom: 18px;
+}
+
+.ll-empty-state h3 {
+  margin: 0 0 8px;
+  color: #202944;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.ll-empty-state p {
+  max-width: 340px;
+  margin: 0;
+  color: #858da3;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.ll-empty-action {
+  margin-top: 20px;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6658e8, #4778e9);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ll-empty-action:hover {
+  transform: translateY(-2px);
+}

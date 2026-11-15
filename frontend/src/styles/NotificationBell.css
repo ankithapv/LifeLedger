@@ -1,0 +1,258 @@
+.ll-notification-wrapper {
+  position: relative;
+  display: inline-flex;
+  z-index: 100;
+}
+
+.ll-bell-button {
+  width: 43px;
+  height: 43px;
+  border: 1px solid #e8eaf1;
+  border-radius: 12px;
+  background: white;
+  color: #555b78;
+  display: grid;
+  place-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.ll-bell-button:hover {
+  background: #f2efff;
+  color: #7765ec;
+  border-color: #d8d0ff;
+  transform: translateY(-2px);
+}
+
+.ll-bell-count {
+  position: absolute;
+  top: -6px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  border: 2px solid white;
+  border-radius: 20px;
+  background: #f45d80;
+  color: white;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.ll-notification-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+}
+
+.ll-notification-panel {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  width: 355px;
+  max-width: calc(100vw - 30px);
+  background: white;
+  border: 1px solid #ebecf3;
+  border-radius: 17px;
+  box-shadow: 0 20px 65px rgba(24, 28, 60, 0.18);
+  overflow: hidden;
+  z-index: 99;
+  animation: ll-panel-enter 0.22s ease;
+}
+
+@keyframes ll-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ll-notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 21px 20px 16px;
+}
+
+.ll-notification-header h3 {
+  margin: 0;
+  font-size: 17px;
+  color: #1b203c;
+  font-weight: 750;
+}
+
+.ll-notification-header p {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: #9296a9;
+}
+
+.ll-notification-close {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: #f5f5fa;
+  color: #7b8098;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.ll-notification-toolbar {
+  padding: 12px 20px;
+  border-top: 1px solid #f0f0f5;
+  border-bottom: 1px solid #f0f0f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ll-notification-toolbar > span {
+  color: #9296aa;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  font-weight: 750;
+}
+
+.ll-notification-toolbar button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #7664e8;
+  font-size: 10px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ll-notification-item {
+  padding: 15px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid #f1f1f5;
+  transition: 0.2s ease;
+}
+
+.ll-notification-item:hover {
+  background: #fafaff;
+}
+
+.ll-notification-item.unread {
+  background: #f9f8ff;
+}
+
+.ll-notification-icon {
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+}
+
+.ll-notification-icon.warning {
+  color: #e7a33c;
+  background: #fff5e4;
+}
+
+.ll-notification-icon.success {
+  color: #20b88d;
+  background: #e7faf4;
+}
+
+.ll-notification-icon.reminder {
+  color: #7967e9;
+  background: #f0edff;
+}
+
+.ll-notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ll-notification-content h4 {
+  margin: 1px 0 5px;
+  color: #30344e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ll-notification-content p {
+  margin: 0 0 7px;
+  color: #82869c;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.ll-notification-content span {
+  color: #a5a8b7;
+  font-size: 9px;
+}
+
+.ll-unread-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #8370f3;
+  margin-top: 6px;
+}
+
+.ll-view-all {
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background: white;
+  color: #7664e8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ll-view-all:hover {
+  background: #f5f3ff;
+}
+
+.ll-notification-empty {
+  padding: 35px 15px;
+  text-align: center;
+  color: #858aa1;
+}
+
+.ll-notification-empty svg {
+  color: #a69aff;
+}
+
+.ll-notification-empty h4 {
+  margin: 12px 0 5px;
+  color: #30344e;
+  font-size: 13px;
+}
+
+.ll-notification-empty p {
+  font-size: 11px;
+}
+
+@media (max-width: 450px) {
+  .ll-notification-panel {
+    position: fixed;
+    top: 80px;
+    right: 12px;
+  }
+}

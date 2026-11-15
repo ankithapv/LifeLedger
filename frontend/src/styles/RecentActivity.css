@@ -1,0 +1,165 @@
+.ll-activity-card {
+  padding: 23px;
+  background: #ffffff;
+  border: 1px solid #e9eaf2;
+  border-radius: 19px;
+  box-shadow: 0 5px 20px rgba(31, 41, 80, 0.04);
+}
+
+.ll-activity-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 23px;
+}
+
+.ll-activity-eyebrow {
+  color: #8170e7;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.ll-activity-heading h3 {
+  margin: 7px 0 5px;
+  color: #252940;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.ll-activity-heading p {
+  margin: 0;
+  color: #9297a9;
+  font-size: 12px;
+}
+
+.ll-activity-heading-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 41px;
+  height: 41px;
+  color: #735be8;
+  background: #f1eeff;
+  border-radius: 12px;
+}
+
+.ll-activity-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ll-activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f1f5;
+}
+
+.ll-activity-item:first-child {
+  padding-top: 0;
+}
+
+.ll-activity-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.ll-activity-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+.ll-activity-icon.upload {
+  color: #705be7;
+  background: #f1eeff;
+}
+
+.ll-activity-icon.update {
+  color: #159b70;
+  background: #eaf8f2;
+}
+
+.ll-activity-icon.delete {
+  color: #dc5368;
+  background: #fff0f2;
+}
+
+.ll-activity-icon.renew {
+  color: #3189d8;
+  background: #eaf4ff;
+}
+
+.ll-activity-icon.view {
+  color: #d58a24;
+  background: #fff6e8;
+}
+
+.ll-activity-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.ll-activity-details h4 {
+  margin: 1px 0 4px;
+  color: #30344a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ll-activity-details p {
+  margin: 0 0 6px;
+  color: #858ba0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ll-activity-details span {
+  color: #a4a8b6;
+  font-size: 10px;
+}
+
+.ll-activity-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 12px;
+  text-align: center;
+}
+
+.ll-activity-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 53px;
+  height: 53px;
+  margin-bottom: 12px;
+  color: #8170e7;
+  background: #f2efff;
+  border-radius: 16px;
+}
+
+.ll-activity-empty h4 {
+  margin: 0 0 6px;
+  color: #30344a;
+  font-size: 14px;
+}
+
+.ll-activity-empty p {
+  margin: 0;
+  color: #969bad;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .ll-activity-card {
+    padding: 17px;
+  }
+}

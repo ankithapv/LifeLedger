@@ -1,0 +1,118 @@
+/* =================================
+   LIFELEDGER - APPLICATION STYLES
+================================= */
+
+:root {
+  --ll-primary: #6957e8;
+  --ll-primary-dark: #5141c9;
+  --ll-secondary: #3288ed;
+  --ll-sidebar: #11172b;
+  --ll-background: #f5f6fc;
+  --ll-surface: #ffffff;
+  --ll-text: #202944;
+  --ll-muted: #858da3;
+  --ll-border: #e9eaf2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Main authenticated layout */
+
+.ll-app-shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--ll-background);
+}
+
+.ll-app-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ll-app-content {
+  flex: 1;
+  width: 100%;
+  padding: 28px;
+  min-width: 0;
+  animation: ll-page-enter 0.35s ease;
+}
+
+/* Public pages */
+
+.ll-public-layout {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--ll-background);
+}
+
+/* Page animation */
+
+@keyframes ll-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Theme support */
+
+[data-theme="dark"] {
+  --ll-background: #0c1223;
+  --ll-surface: #151d33;
+  --ll-text: #f1f3fa;
+  --ll-muted: #a2abc0;
+  --ll-border: #28324a;
+}
+
+[data-theme="dark"] .ll-app-shell {
+  background: var(--ll-background);
+  color: var(--ll-text);
+}
+
+/* Responsive layout */
+
+@media (max-width: 1024px) {
+  .ll-app-content {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ll-app-shell {
+    flex-direction: column;
+  }
+
+  .ll-app-content {
+    padding: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ll-app-content {
+    padding: 13px;
+  }
+}

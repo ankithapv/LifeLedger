@@ -1,0 +1,39 @@
+.ll-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 35px 20px;
+  color: #667085;
+}
+
+.ll-loading-fullscreen {
+  min-height: 75vh;
+  width: 100%;
+}
+
+.ll-loading-icon {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  color: #6658e8;
+  background: #efedff;
+  animation: ll-spin 1.2s linear infinite;
+}
+
+.ll-loading p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+@keyframes ll-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
