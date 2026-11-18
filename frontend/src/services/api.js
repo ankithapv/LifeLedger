@@ -1,12 +1,14 @@
+
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "http://127.0.0.1:8000",
-  timeout: 30000
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+const api = axios.create({
+  baseURL: API_BASE_URL || "https://lifeledger-backend1.onrender.com",
 });
 
-// Automatically attach JWT token
-API.interceptors.request.use(
+// Attach JWT token to every API request
+api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access_token");
 
@@ -16,20 +18,9 @@ API.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
-);
-
-// Handle common API errors
-API.interceptors.response.use(
-  (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("user");
-    }
-
     return Promise.reject(error);
   }
 );
 
-export default API;
+export default api;

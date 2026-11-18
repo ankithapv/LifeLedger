@@ -1,3 +1,4 @@
+
 import os
 from pathlib import Path
 
@@ -10,14 +11,27 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 BASE_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(BASE_DIR / ".env")
 
-# Read MySQL credentials
+# Read database details
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = int(os.getenv("DB_PORT", "3306"))
 DB_NAME = os.getenv("DB_NAME")
 
-# Build database URL safely
+# Read the certificate path (if provided)
+CA_PATH = os.getenv("CA_PATH")
+
+# Configure secure connection when a CA certificate is provided
+connect_args = {}
+
+if CA_PATH:
+    connect_args = {
+        "ssl_verify_cert": True,
+        "ssl_verify_identity": True,
+        "ssl_ca": CA_PATH
+    }
+
+# Build database URL
 DATABASE_URL = URL.create(
     drivername="mysql+pymysql",
     username=DB_USER,
@@ -27,10 +41,12 @@ DATABASE_URL = URL.create(
     database=DB_NAME
 )
 
-# Create SQLAlchemy engine
+# Create database connection
 engine = create_engine(
     DATABASE_URL,
+    connect_args=connect_args,
     pool_pre_ping=True,
+    pool_recycle=300,
     echo=False
 )
 

@@ -1,4 +1,6 @@
+
 import React, { useState } from "react";
+
 import {
   Bell,
   Check,
@@ -12,54 +14,46 @@ import {
   Globe
 } from "lucide-react";
 
+import { useNotifications } from "../context/NotificationContext";
+
 import "../styles/Notifications.css";
 
 function Notifications() {
   const [activeFilter, setActiveFilter] = useState("All");
 
-  // Real notifications will be fetched from the backend later.
-  const [notifications, setNotifications] = useState([]);
-
-  const unreadCount = notifications.filter(
-    (notification) => !notification.read
-  ).length;
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    error,
+    markAsRead,
+    markAllAsRead
+  } = useNotifications();
 
   const filteredNotifications = notifications.filter((notification) => {
-    if (activeFilter === "Unread") return !notification.read;
-    if (activeFilter === "Read") return notification.read;
+    if (activeFilter === "Unread") return !notification.isRead;
+    if (activeFilter === "Read") return notification.isRead;
     if (activeFilter === "Reminders") {
-      return notification.type === "Reminder";
+      return notification.notificationType?.includes("days") ||
+        notification.notificationType === "expired";
     }
     return true;
   });
 
-  const markAsRead = (id) => {
-    setNotifications((previous) =>
-      previous.map((notification) =>
-        notification.id === id
-          ? { ...notification, read: true }
-          : notification
-      )
-    );
+  const handleMarkAsRead = async (id) => {
+    try {
+      await markAsRead(id);
+    } catch (error) {
+      console.error("Unable to mark notification as read:", error);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications((previous) =>
-      previous.map((notification) => ({
-        ...notification,
-        read: true
-      }))
-    );
-  };
-
-  const deleteNotification = (id) => {
-    setNotifications((previous) =>
-      previous.filter((notification) => notification.id !== id)
-    );
-  };
-
-  const clearAll = () => {
-    setNotifications([]);
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead();
+    } catch (error) {
+      console.error("Unable to mark all notifications as read:", error);
+    }
   };
 
   const getIcon = (icon) => {
@@ -90,7 +84,6 @@ function Notifications() {
           </div>
         </div>
 
-        {/* Notification channels */}
         <section className="notification-channels">
           <h2>Notification Channels</h2>
 
@@ -132,7 +125,6 @@ function Notifications() {
           </div>
         </section>
 
-        {/* Notifications */}
         <section className="notification-content">
 
           <div className="notification-content-heading">
@@ -144,19 +136,10 @@ function Notifications() {
             <div className="notification-actions">
               <button
                 type="button"
-                onClick={markAllAsRead}
+                onClick={handleMarkAllAsRead}
                 disabled={unreadCount === 0}
               >
                 <CheckCheck /> Mark all read
-              </button>
-
-              <button
-                type="button"
-                onClick={clearAll}
-                className="clear-notifications"
-                disabled={notifications.length === 0}
-              >
-                <Trash2 /> Clear all
               </button>
             </div>
           </div>
@@ -176,7 +159,22 @@ function Notifications() {
 
           <div className="notification-list">
 
-            {filteredNotifications.length === 0 ? (
+            {loading ? (
+
+              <div className="notification-empty">
+                <Bell size={40} />
+                <h3>Loading notifications...</h3>
+              </div>
+
+            ) : error ? (
+
+              <div className="notification-empty">
+                <AlertTriangle size={40} />
+                <h3>Unable to load notifications</h3>
+                <p>{error}</p>
+              </div>
+
+            ) : filteredNotifications.length === 0 ? (
 
               <div className="notification-empty">
                 <Bell size={40} />
@@ -187,7 +185,7 @@ function Notifications() {
                 </h3>
                 <p>
                   {notifications.length === 0
-                    ? "When you upload documents and receive expiry updates, your notifications will appear here."
+                    ? "When you receive document expiry updates, your notifications will appear here."
                     : "There are no notifications in this category."}
                 </p>
               </div>
@@ -197,7 +195,7 @@ function Notifications() {
               filteredNotifications.map((notification) => (
                 <div
                   className={`notification-item ${
-                    !notification.read ? "unread" : ""
+                    !notification.isRead ? "unread" : ""
                   }`}
                   key={notification.id}
                 >
@@ -210,7 +208,8 @@ function Notifications() {
 
                     <div className="notification-item-title">
                       <h3>{notification.title}</h3>
-                      {!notification.read && (
+
+                      {!notification.isRead && (
                         <span className="unread-dot" />
                       )}
                     </div>
@@ -218,33 +217,27 @@ function Notifications() {
                     <p>{notification.message}</p>
 
                     <div className="notification-item-meta">
-                      <span>{notification.date}</span>
-                      <span>{notification.type}</span>
+                      <span>
+                        {notification.createdAt
+                          ? new Date(notification.createdAt).toLocaleString()
+                          : ""}
+                      </span>
+                      <span>{notification.notificationType}</span>
                     </div>
 
                   </div>
 
                   <div className="notification-item-actions">
 
-                    {!notification.read && (
+                    {!notification.isRead && (
                       <button
                         type="button"
                         title="Mark as read"
-                        onClick={() => markAsRead(notification.id)}
+                        onClick={() => handleMarkAsRead(notification.id)}
                       >
                         <Check />
                       </button>
                     )}
-
-                    <button
-                      type="button"
-                      title="Delete notification"
-                      onClick={() =>
-                        deleteNotification(notification.id)
-                      }
-                    >
-                      <Trash2 />
-                    </button>
 
                   </div>
                 </div>

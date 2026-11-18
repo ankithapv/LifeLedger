@@ -1,61 +1,152 @@
+
 import React, {
   createContext,
   useContext,
-  useState
+  useState,
+  useEffect,
+  useCallback
 } from "react";
+
+import { useAuth } from "./AuthContext";
+
+import {
+  getNotifications,
+  markNotificationAsRead
+} from "../services/notificationService";
 
 const NotificationContext = createContext(null);
 
 export function NotificationProvider({ children }) {
-  const [notifications, setNotifications] = useState([]);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Calculate unread notification count
   const unreadCount = notifications.filter(
     (notification) => !notification.isRead
   ).length;
 
-  const addNotification = (notification) => {
-    const newNotification = {
-      id: Date.now(),
-      isRead: false,
-      createdAt: new Date().toISOString(),
-      ...notification
+  // Fetch notifications from FastAPI backend
+  const refreshNotifications = useCallback(async () => {
+    if (!isAuthenticated) {
+      setNotifications([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await getNotifications();
+
+      const formattedNotifications = response.map((notification) => ({
+        ...notification,
+
+        isRead: notification.is_read,
+        createdAt: notification.created_at,
+        expiryDate: notification.expiry_date,
+        notificationType: notification.notification_type,
+
+        read: notification.is_read,
+        date: notification.created_at,
+        type: "Reminder",
+        icon: "clock"
+      }));
+
+      setNotifications(formattedNotifications);
+
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+      setError("Unable to load notifications.");
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  // Fetch notifications after login and automatically every 30 seconds
+  useEffect(() => {
+    if (authLoading) return;
+
+    if (!isAuthenticated) {
+      setNotifications([]);
+      setError(null);
+      return;
+    }
+
+    // Fetch immediately after login
+    refreshNotifications();
+
+    // Automatically check for new notifications every 30 seconds
+    const intervalId = window.setInterval(() => {
+      refreshNotifications();
+    }, 30000);
+
+    // Stop checking when the provider is removed or user logs out
+    return () => {
+      window.clearInterval(intervalId);
     };
 
-    setNotifications((previous) => [
-      newNotification,
-      ...previous
-    ]);
+  }, [isAuthenticated, authLoading, refreshNotifications]);
+
+  // Mark one notification as read in the backend
+  const markAsRead = async (notificationId) => {
+    try {
+      await markNotificationAsRead(notificationId);
+
+      setNotifications((previous) =>
+        previous.map((notification) =>
+          notification.id === notificationId
+            ? {
+                ...notification,
+                isRead: true,
+                read: true,
+                is_read: true
+              }
+            : notification
+        )
+      );
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+      throw error;
+    }
   };
 
-  const markAsRead = (notificationId) => {
-    setNotifications((previous) =>
-      previous.map((notification) =>
-        notification.id === notificationId
-          ? { ...notification, isRead: true }
-          : notification
+  // Mark all unread notifications as read
+  const markAllAsRead = async () => {
+    const unreadNotifications = notifications.filter(
+      (notification) => !notification.isRead
+    );
+
+    await Promise.all(
+      unreadNotifications.map((notification) =>
+        markNotificationAsRead(notification.id)
       )
     );
-  };
 
-  const markAllAsRead = () => {
     setNotifications((previous) =>
       previous.map((notification) => ({
         ...notification,
-        isRead: true
+        isRead: true,
+        read: true,
+        is_read: true
       }))
     );
   };
 
-  const deleteNotification = (notificationId) => {
-    setNotifications((previous) =>
-      previous.filter(
-        (notification) => notification.id !== notificationId
-      )
-    );
-  };
-
-  const clearNotifications = () => {
-    setNotifications([]);
+  // Add a temporary notification to the frontend
+  const addNotification = (notification) => {
+    setNotifications((previous) => [
+      {
+        ...notification,
+        id: Date.now(),
+        isRead: false,
+        read: false,
+        createdAt: new Date().toISOString()
+      },
+      ...previous
+    ]);
   };
 
   return (
@@ -64,11 +155,12 @@ export function NotificationProvider({ children }) {
         notifications,
         setNotifications,
         unreadCount,
+        loading,
+        error,
+        refreshNotifications,
         addNotification,
         markAsRead,
-        markAllAsRead,
-        deleteNotification,
-        clearNotifications
+        markAllAsRead
       }}
     >
       {children}
@@ -87,3 +179,4 @@ export function useNotifications() {
 
   return context;
 }
+

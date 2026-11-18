@@ -1,5 +1,7 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   Bell,
   FileClock,
@@ -10,53 +12,30 @@ import {
   X
 } from "lucide-react";
 
+import { useNotifications } from "../context/NotificationContext";
+
 import "../styles/NotificationBell.css";
 
 function NotificationBell() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Document expiring soon",
-      message: "Your insurance policy needs renewal soon.",
-      time: "2 hours ago",
-      type: "warning",
-      read: false
-    },
-    {
-      id: 2,
-      title: "Document uploaded",
-      message: "Your new certificate was uploaded successfully.",
-      time: "Yesterday",
-      type: "success",
-      read: false
-    },
-    {
-      id: 3,
-      title: "Expiry reminder",
-      message: "A document is approaching its expiry date.",
-      time: "2 days ago",
-      type: "reminder",
-      read: true
-    }
-  ]);
-
-  const unreadCount = notifications.filter(
-    (item) => !item.read
-  ).length;
-
-  const markAllRead = () => {
-    setNotifications((previous) =>
-      previous.map((item) => ({
-        ...item,
-        read: true
-      }))
-    );
-  };
+  const {
+    notifications,
+    unreadCount,
+    markAllAsRead,
+    loading
+  } = useNotifications();
 
   const closePanel = () => setOpen(false);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await markAllAsRead();
+    } catch (error) {
+      console.error("Unable to mark all notifications as read:", error);
+    }
+  };
 
   const getIcon = (type) => {
     if (type === "warning") return <ShieldAlert size={19} />;
@@ -109,7 +88,10 @@ function NotificationBell() {
             <div className="ll-notification-toolbar">
               <span>RECENT ACTIVITY</span>
 
-              <button onClick={markAllRead}>
+              <button
+                onClick={handleMarkAllRead}
+                disabled={unreadCount === 0}
+              >
                 <Check size={13} />
                 Mark all read
               </button>
@@ -117,18 +99,22 @@ function NotificationBell() {
 
             <div className="ll-notification-list">
 
-              {notifications.length === 0 ? (
+              {loading ? (
+                <div className="ll-notification-empty">
+                  <p>Loading notifications...</p>
+                </div>
+              ) : notifications.length === 0 ? (
                 <div className="ll-notification-empty">
                   <Bell size={28} />
                   <h4>All caught up!</h4>
                   <p>No notifications right now.</p>
                 </div>
               ) : (
-                notifications.map((item) => (
+                notifications.slice(0, 5).map((item) => (
                   <div
                     key={item.id}
                     className={`ll-notification-item ${
-                      !item.read ? "unread" : ""
+                      !item.isRead ? "unread" : ""
                     }`}
                   >
                     <div className={`ll-notification-icon ${item.type}`}>
@@ -138,10 +124,14 @@ function NotificationBell() {
                     <div className="ll-notification-content">
                       <h4>{item.title}</h4>
                       <p>{item.message}</p>
-                      <span>{item.time}</span>
+                      <span>
+                        {item.createdAt
+                          ? new Date(item.createdAt).toLocaleString()
+                          : ""}
+                      </span>
                     </div>
 
-                    {!item.read && (
+                    {!item.isRead && (
                       <span className="ll-unread-dot" />
                     )}
                   </div>

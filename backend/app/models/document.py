@@ -1,12 +1,25 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
+
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    DateTime,
+    ForeignKey,
+    Text
+)
 from sqlalchemy.sql import func
+
 from app.database.connection import Base
 
 
 class Document(Base):
     __tablename__ = "documents"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     user_id = Column(
         Integer,
@@ -15,19 +28,53 @@ class Document(Base):
         index=True
     )
 
-    title = Column(String(200), nullable=False)
-    original_filename = Column(String(255), nullable=False)
-    file_path = Column(String(500), nullable=False)
+    title = Column(
+        String(200),
+        nullable=False
+    )
 
-    category = Column(String(100), nullable=False, default="Other")
-    description = Column(Text, nullable=True)
+    original_filename = Column(
+        String(255),
+        nullable=False
+    )
 
-    file_type = Column(String(50), nullable=True)
-    file_size = Column(Integer, nullable=True)
+    file_path = Column(
+        String(500),
+        nullable=False
+    )
 
-    expiry_date = Column(DateTime, nullable=True)
+    category = Column(
+        String(100),
+        nullable=False,
+        default="Other"
+    )
 
-    status = Column(String(30), nullable=False, default="Active")
+    description = Column(
+        Text,
+        nullable=True
+    )
+
+    file_type = Column(
+        String(50),
+        nullable=True
+    )
+
+    file_size = Column(
+        Integer,
+        nullable=True
+    )
+
+    # Automatically detected expiry date from uploaded PDF
+    expiry_date = Column(
+        DateTime,
+        nullable=True
+    )
+
+    status = Column(
+        String(30),
+        nullable=False,
+        default="Active"
+    )
 
     created_at = Column(
         DateTime(timezone=True),

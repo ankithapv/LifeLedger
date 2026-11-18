@@ -1,0 +1,29 @@
+
+# Python virtual environments
+.venv/
+.venv313/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Uploaded documents
+uploads/
+
+# Git files
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log

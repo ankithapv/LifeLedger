@@ -1,5 +1,5 @@
+
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 import {
   Bot,
@@ -10,10 +10,11 @@ import {
   Trash2
 } from "lucide-react";
 
+import { sendAssistantMessage } from "../services/assistantService";
+
 import "../styles/Assistant.css";
 
 function Assistant() {
-  const navigate = useNavigate();
 
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -34,8 +35,9 @@ function Assistant() {
     });
   }, [messages, loading]);
 
-  // Backend AI integration will be added later.
-  const sendMessage = (question = input) => {
+  // Send message to LifeLedger AI backend
+  const sendMessage = async (question = input) => {
+
     const trimmedQuestion = question.trim();
 
     if (!trimmedQuestion || loading) return;
@@ -52,16 +54,58 @@ function Assistant() {
     ]);
 
     setInput("");
+    setLoading(true);
 
-    // AI API will be connected after backend development.
+    try {
+
+      // Send question to FastAPI backend
+      const response = await sendAssistantMessage(
+        trimmedQuestion
+      );
+
+      // Get AI-generated answer
+      const assistantMessage = {
+        id: Date.now() + 1,
+        sender: "assistant",
+        text: response.reply || "Sorry, I could not generate a response."
+      };
+
+      setMessages((previous) => [
+        ...previous,
+        assistantMessage
+      ]);
+
+    } catch (error) {
+
+      console.error("Assistant API Error:", error);
+
+      const errorMessage = {
+        id: Date.now() + 1,
+        sender: "assistant",
+        text: error.response?.data?.detail ||
+          "Sorry, something went wrong. Please try again."
+      };
+
+      setMessages((previous) => [
+        ...previous,
+        errorMessage
+      ]);
+
+    } finally {
+
+      setLoading(false);
+
+    }
   };
 
+  // Start a new conversation
   const startNewChat = () => {
     setMessages([]);
     setInput("");
     setLoading(false);
   };
 
+  // Clear current chat
   const clearChat = () => {
     setMessages([]);
     setInput("");
@@ -76,17 +120,20 @@ function Assistant() {
         <header className="assistant-header">
 
           <div className="assistant-header-title">
+
             <div className="assistant-header-icon">
               <Bot />
             </div>
 
             <div>
               <h1>LifeLedger AI</h1>
+
               <p>
                 <span />
                 Your personal document assistant
               </p>
             </div>
+
           </div>
 
           <div className="assistant-ai-label">
@@ -119,6 +166,7 @@ function Assistant() {
 
             )}
 
+            {/* Display chat messages */}
             {messages.map((message) => (
 
               <div
@@ -127,9 +175,11 @@ function Assistant() {
               >
 
                 <div className="assistant-message-avatar">
+
                   {message.sender === "assistant"
                     ? <Bot />
                     : <User />}
+
                 </div>
 
                 <div className="assistant-message-content">
@@ -148,17 +198,24 @@ function Assistant() {
 
             ))}
 
+            {/* Loading indicator */}
             {loading && (
+
               <div className="assistant-message assistant">
+
                 <div className="assistant-message-avatar">
                   <Bot />
                 </div>
 
                 <div className="assistant-message-content">
                   <span>LifeLedger AI</span>
-                  <p className="assistant-typing">Thinking...</p>
+                  <p className="assistant-typing">
+                    Thinking...
+                  </p>
                 </div>
+
               </div>
+
             )}
 
             <div ref={messagesEndRef} />
@@ -175,6 +232,7 @@ function Assistant() {
               </h3>
 
               <div>
+
                 {suggestions.map((suggestion) => (
 
                   <button
@@ -187,6 +245,7 @@ function Assistant() {
                   </button>
 
                 ))}
+
               </div>
 
             </div>
@@ -207,6 +266,7 @@ function Assistant() {
               placeholder="Ask about your documents..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              disabled={loading}
             />
 
             <button
@@ -219,8 +279,8 @@ function Assistant() {
           </form>
 
           <p className="assistant-disclaimer">
-            Connect your document vault to enable AI-powered
-            answers based on your actual documents.
+            LifeLedger AI provides answers based on your
+            personal document records.
           </p>
 
         </section>
@@ -231,6 +291,7 @@ function Assistant() {
           <button
             type="button"
             onClick={startNewChat}
+            disabled={loading}
           >
             <Plus /> New Conversation
           </button>
@@ -238,6 +299,7 @@ function Assistant() {
           <button
             type="button"
             onClick={clearChat}
+            disabled={loading}
           >
             <Trash2 /> Clear Chat
           </button>
