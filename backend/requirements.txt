@@ -34,3 +34,4 @@ pytesseract==0.3.13
 Pillow==13.0.0
 PyMuPDF==2.1
 APScheduler==3.11.3
+scikit-learn==1.9.1

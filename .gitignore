@@ -29,3 +29,20 @@ uploads/
 # IDE files
 .vscode/
 .idea/
+
+# Machine learning generated model
+*.pkl
+!backend/app/ml/document_classifier.pkl
+
+# Python build files
+build/
+dist/
+*.egg-info/
+
+# Database files
+*.db
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db

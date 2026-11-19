@@ -19,6 +19,12 @@ class User(Base):
     )
 
     hashed_password = Column(String(255), nullable=False)
+    reset_token_hash = Column(String(255), nullable=True)
+
+    reset_token_expires_at = Column(
+    DateTime(timezone=True),
+    nullable=True
+)
 
     phone = Column(String(20), nullable=True)
     location = Column(String(150), nullable=True)

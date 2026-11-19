@@ -11,7 +11,9 @@ import { useAuth } from "./AuthContext";
 
 import {
   getNotifications,
-  markNotificationAsRead
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  markNotificationAsUnread
 } from "../services/notificationService";
 
 const NotificationContext = createContext(null);
@@ -92,38 +94,41 @@ export function NotificationProvider({ children }) {
 
   // Mark one notification as read in the backend
   const markAsRead = async (notificationId) => {
-    try {
-      await markNotificationAsRead(notificationId);
+  const notification = notifications.find(
+    (item) => item.id === notificationId
+  );
 
-      setNotifications((previous) =>
-        previous.map((notification) =>
-          notification.id === notificationId
-            ? {
-                ...notification,
-                isRead: true,
-                read: true,
-                is_read: true
-              }
-            : notification
-        )
-      );
-    } catch (error) {
-      console.error("Failed to mark notification as read:", error);
-      throw error;
+  if (!notification) return;
+
+  try {
+    if (notification.isRead) {
+      await markNotificationAsUnread(notificationId);
+    } else {
+      await markNotificationAsRead(notificationId);
     }
-  };
+
+    setNotifications((previous) =>
+      previous.map((item) =>
+        item.id === notificationId
+          ? {
+              ...item,
+              isRead: !notification.isRead,
+              read: !notification.isRead,
+              is_read: !notification.isRead
+            }
+          : item
+      )
+    );
+  } catch (error) {
+    console.error("Failed to update notification:", error);
+    throw error;
+  }
+};
 
   // Mark all unread notifications as read
   const markAllAsRead = async () => {
-    const unreadNotifications = notifications.filter(
-      (notification) => !notification.isRead
-    );
-
-    await Promise.all(
-      unreadNotifications.map((notification) =>
-        markNotificationAsRead(notification.id)
-      )
-    );
+  try {
+    await markAllNotificationsAsRead();
 
     setNotifications((previous) =>
       previous.map((notification) => ({
@@ -133,7 +138,11 @@ export function NotificationProvider({ children }) {
         is_read: true
       }))
     );
-  };
+  } catch (error) {
+    console.error("Failed to mark all notifications as read:", error);
+    throw error;
+  }
+};
 
   // Add a temporary notification to the frontend
   const addNotification = (notification) => {

@@ -1,3 +1,4 @@
+import os
 from app.services.auth_dependency import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -15,6 +16,21 @@ from app.services.security import (
     hash_password,
     verify_password,
     create_access_token
+)
+from datetime import datetime, timedelta
+
+from app.schemas.auth import (
+    ForgotPasswordRequest,
+    ResetPasswordRequest
+)
+
+from app.services.security import (
+    create_password_reset_token,
+    hash_password_reset_token
+)
+
+from app.services.password_reset_service import (
+    send_password_reset_email
 )
 
 router = APIRouter(
@@ -105,3 +121,103 @@ def update_my_profile(
     db.refresh(current_user)
 
     return current_user
+
+@router.post("/forgot-password")
+def forgot_password(
+    request: ForgotPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(
+        User.email == request.email
+    ).first()
+
+    # Always return the same response to avoid revealing
+    # whether an email is registered.
+    response = {
+        "message": "If the email is registered, a reset link will be sent."
+    }
+
+    if user is None:
+        return response
+
+    reset_token = create_password_reset_token()
+
+    user.reset_token_hash = hash_password_reset_token(
+        reset_token
+    )
+
+    # MySQL stores this DateTime without timezone information.
+    user.reset_token_expires_at = (
+        datetime.utcnow() + timedelta(minutes=15)
+    )
+
+    db.commit()
+
+    frontend_url = os.getenv(
+        "FRONTEND_URL",
+        "http://localhost:5173"
+    ).rstrip("/")
+
+    reset_link = (
+        f"{frontend_url}/reset-password?token={reset_token}"
+    )
+
+    try:
+        send_password_reset_email(
+            recipient_email=user.email,
+            reset_link=reset_link
+        )
+    except Exception:
+        user.reset_token_hash = None
+        user.reset_token_expires_at = None
+        db.commit()
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to send password reset email. Please try again."
+        )
+
+    return response
+
+@router.post("/reset-password")
+def reset_password(
+    request: ResetPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    token_hash = hash_password_reset_token(request.token)
+
+    user = db.query(User).filter(
+        User.reset_token_hash == token_hash
+    ).first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired password reset link"
+        )
+
+    if (
+        user.reset_token_expires_at is None
+        or datetime.utcnow() > user.reset_token_expires_at
+    ):
+        user.reset_token_hash = None
+        user.reset_token_expires_at = None
+        db.commit()
+
+        raise HTTPException(
+            status_code=400,
+            detail="Password reset link has expired"
+        )
+
+    user.hashed_password = hash_password(
+        request.new_password
+    )
+
+    # Invalidate the reset token after successful use
+    user.reset_token_hash = None
+    user.reset_token_expires_at = None
+
+    db.commit()
+
+    return {
+        "message": "Password reset successfully. Please log in with your new password."
+    }

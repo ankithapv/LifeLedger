@@ -21,6 +21,13 @@ export const markNotificationAsRead = async (notificationId) => {
   return response.data;
 };
 
+export const markNotificationAsUnread = async (notificationId) => {
+  const response = await API.patch(
+    `/notifications/${notificationId}/unread`
+  );
+  return response.data;
+};
+
 // Mark all notifications as read
 export const markAllNotificationsAsRead = async () => {
   const response = await API.patch("/notifications/read-all");
@@ -50,6 +57,7 @@ export default {
   getNotifications,
   getUnreadCount,
   markNotificationAsRead,
+  markNotificationAsUnread,
   markAllNotificationsAsRead,
   deleteNotification,
   updateNotificationPreferences

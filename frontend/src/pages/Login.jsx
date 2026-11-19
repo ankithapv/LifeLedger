@@ -75,20 +75,26 @@ function Login() {
             <label>Password</label>
 
             <div className="password-input-wrapper">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Enter your password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    required
+  />
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+    {showPassword ? "Hide" : "Show"}
+  </button>
+</div>
+            <div style={{ textAlign: "right", marginTop: "8px" }}>
+              <Link to="/forgot-password"
+               style={{ color: "#2563eb", textDecoration: "none" }}
               >
-                {showPassword ? "Hide" : "Show"}
-              </button>
+              Forgot Password?
+              </Link>
             </div>
           </div>
 

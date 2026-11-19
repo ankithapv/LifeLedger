@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 
 import {
   Bell,
   Check,
   CheckCheck,
-  Trash2,
   Clock,
   AlertTriangle,
   FileText,
@@ -33,21 +31,27 @@ function Notifications() {
   const filteredNotifications = notifications.filter((notification) => {
     if (activeFilter === "Unread") return !notification.isRead;
     if (activeFilter === "Read") return notification.isRead;
+
     if (activeFilter === "Reminders") {
-      return notification.notificationType?.includes("days") ||
-        notification.notificationType === "expired";
+      return (
+        notification.notificationType?.includes("days") ||
+        notification.notificationType === "expired"
+      );
     }
+
     return true;
   });
 
+  // Toggle between Read and Unread
   const handleMarkAsRead = async (id) => {
     try {
       await markAsRead(id);
     } catch (error) {
-      console.error("Unable to mark notification as read:", error);
+      console.error("Unable to update notification:", error);
     }
   };
 
+  // Mark all unread notifications as read
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAsRead();
@@ -97,7 +101,7 @@ function Notifications() {
                 <strong>Email</strong>
                 <p>Expiry and account updates</p>
               </div>
-              <span className="channel-status">Planned</span>
+              <span className="channel-status">Active</span>
             </div>
 
             <div className="notification-channel">
@@ -229,17 +233,30 @@ function Notifications() {
 
                   <div className="notification-item-actions">
 
-                    {!notification.isRead && (
-                      <button
-                        type="button"
-                        title="Mark as read"
-                        onClick={() => handleMarkAsRead(notification.id)}
-                      >
+                    {/* Button remains visible for both states */}
+                    <button
+                      type="button"
+                      title={
+                        notification.isRead
+                          ? "Mark as unread"
+                          : "Mark as read"
+                      }
+                      aria-label={
+                        notification.isRead
+                          ? "Mark as unread"
+                          : "Mark as read"
+                      }
+                      onClick={() => handleMarkAsRead(notification.id)}
+                    >
+                      {notification.isRead ? (
+                        <CheckCheck />
+                      ) : (
                         <Check />
-                      </button>
-                    )}
+                      )}
+                    </button>
 
                   </div>
+
                 </div>
               ))
 

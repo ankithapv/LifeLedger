@@ -1,4 +1,3 @@
-
 import os
 from uuid import uuid4
 from pathlib import Path
@@ -21,6 +20,9 @@ from app.models.document import Document
 from app.models.user import User
 from app.schemas.document import DocumentResponse, DocumentUpdate
 from app.services.auth_dependency import get_current_user
+
+# ML document classification
+from app.ml.predict import predict_document_category
 
 # OCR functions for automatic text and expiry-date extraction
 from app.services.ocr_service import (
@@ -116,8 +118,32 @@ def upload_document(
                 detail="Uploaded file is empty"
             )
 
-        # Expiry date detection
+        # Expiry date and ML classification
         parsed_expiry = None
+        extracted_text = ""
+        predicted_category = category
+
+        # Extract text from supported documents
+        if extension in [".pdf", ".png", ".jpg", ".jpeg"]:
+            extracted_text = extract_text_from_document(
+                str(file_path)
+            )
+
+            # Predict document category using ML
+            if extracted_text and extracted_text.strip():
+                try:
+                    predicted_category = predict_document_category(
+                        extracted_text
+                    )
+
+                    print(
+                        f"ML predicted category: {predicted_category}"
+                    )
+
+                except Exception as error:
+                    print(
+                        f"ML classification failed: {error}"
+                    )
 
         # Manual expiry date has first priority
         if expiry_date and expiry_date.strip():
@@ -131,25 +157,20 @@ def upload_document(
                     status_code=400,
                     detail="Expiry date must use YYYY-MM-DD format"
                 )
-
-        # Automatically extract expiry date from PDF and images
-        elif extension in [".pdf", ".png", ".jpg", ".jpeg"]:
-
-            extracted_text = extract_text_from_document(
-                str(file_path)
-            )
-
+           # Otherwise, extract expiry date automatically
+        elif extracted_text:
             parsed_expiry = extract_expiry_date(
                 extracted_text
             )
-
+            print("OCR TEXT FOR EXPIRY CHECK:", extracted_text)
+            print("EXTRACTED EXPIRY DATE:", parsed_expiry)
         # Create database record
         document = Document(
             user_id=current_user.id,
             title=title,
             original_filename=file.filename or saved_filename,
             file_path=str(file_path),
-            category=category,
+            category=predicted_category,
             description=description,
             file_type=file.content_type,
             file_size=file_size,

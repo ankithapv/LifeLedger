@@ -62,13 +62,19 @@ def extract_text_from_document(file_path: str) -> str:
 
 def extract_expiry_date(text: str):
     """
-    Extract expiry dates in numeric and written formats.
+    Extract expiry dates from OCR text and PDF text.
+    Supports numeric and written date formats.
     """
 
     if not text:
         return None
 
     text = text.lower().replace("\r", "\n")
+
+    # Normalise common OCR mistakes in expiry labels
+    text = text.replace("expirv", "expiry")
+    text = text.replace("expirv date", "expiry date")
+    text = text.replace("valid upt0", "valid upto")
 
     lines = [
         line.strip()
@@ -77,53 +83,111 @@ def extract_expiry_date(text: str):
     ]
 
     date_patterns = [
-        r"\b\d{1,2}[-/.]\d{1,2}[-/.]\d{4}\b",
+        r"\b\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}\b",
         r"\b\d{4}[-/.]\d{1,2}[-/.]\d{1,2}\b",
-        r"\b\d{1,2}\s+[a-z]+\s+\d{4}\b",
-        r"\b[a-z]+\s+\d{1,2},?\s+\d{4}\b"
+        r"\b\d{1,2}\s+[a-z]{3,9}\s+\d{4}\b",
+        r"\b[a-z]{3,9}\s+\d{1,2},?\s+\d{4}\b"
     ]
 
     date_formats = [
-        "%d-%m-%Y",
-        "%d/%m/%Y",
-        "%d.%m.%Y",
-        "%Y-%m-%d",
-        "%Y/%m/%d",
-        "%Y.%m.%d",
-        "%d %B %Y",
-        "%d %b %Y",
-        "%B %d %Y",
-        "%B %d, %Y",
-        "%b %d %Y",
-        "%b %d, %Y"
+        "%d-%m-%Y", "%d/%m/%Y", "%d.%m.%Y",
+        "%d-%m-%y", "%d/%m/%y",
+        "%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d",
+        "%d %B %Y", "%d %b %Y",
+        "%B %d %Y", "%B %d, %Y",
+        "%b %d %Y", "%b %d, %Y"
     ]
 
     keywords = [
-        "expiry date",
-        "expiration date",
-        "expiry",
-        "expiration",
-        "valid until",
-        "valid upto",
-        "valid up to",
-        "date of expiry",
-        "expires on",
-        "expiry dt"
-    ]
+    # General expiry terms
+    "expiry date",
+    "expiration date",
+    "expiry",
+    "expiration",
+    "expires",
+    "expires on",
+    "date of expiry",
+    "date of expiration",
+    "expiry dt",
+    "exp date",
+    "exp. date",
 
-    # First check lines containing expiry keywords
+    # Validity terms
+    "valid until",
+    "valid upto",
+    "valid up to",
+    "valid till",
+    "valid through",
+    "validity date",
+    "validity period",
+    "date valid",
+    "valid until date",
+    "validity expires",
+
+    # End-date terms
+    "end date",
+    "policy end date",
+    "coverage end date",
+    "cover end date",
+    "validity end date",
+    "date of end",
+    "last valid date",
+
+    # Insurance-related terms
+    "policy expiry",
+    "policy expires",
+    "policy expiration",
+    "policy period",
+    "period of insurance",
+    "insurance period",
+    "period of coverage",
+    "coverage period",
+    "risk period",
+    "own damage period",
+    "third party period",
+
+    # Licence and vehicle documents
+    "licence expiry",
+    "license expiry",
+    "driving licence validity",
+    "driving license validity",
+    "registration validity",
+    "fitness validity",
+    "permit validity",
+    "insurance validity",
+
+    # Passport and identity documents
+    "passport expiry",
+    "passport expiration",
+    "date of expiry of passport",
+    "document expiry",
+    "card expiry",
+
+    # Certificates and subscriptions
+    "certificate expiry",
+    "certificate validity",
+    "membership expiry",
+    "subscription expiry",
+    "subscription ends",
+    "renewal date",
+    "renew before",
+    "renewal due date"
+]
+
+    # Search expiry-related lines first
     for index, line in enumerate(lines):
         if any(keyword in line for keyword in keywords):
-            nearby_text = " ".join(lines[index:index + 3])
+
+            nearby_text = " ".join(lines[index:index + 5])
 
             for pattern in date_patterns:
                 dates = re.findall(pattern, nearby_text)
 
-                for date in dates:
+                for date_string in dates:
                     for date_format in date_formats:
                         try:
                             return datetime.strptime(
-                                date,
+                                date_string,
                                 date_format
                             )
                         except ValueError:

@@ -15,8 +15,6 @@ services:
       TESSERACT_CMD: /usr/bin/tesseract
     volumes:
       - ./backend/uploads:/app/uploads
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
   frontend:

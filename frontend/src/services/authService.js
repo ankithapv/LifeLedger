@@ -39,3 +39,22 @@ export const updateUserProfile = async (profileData) => {
 
   return response.data;
 };
+
+// Request a password reset link
+export const forgotPassword = async (email) => {
+  const response = await API.post("/auth/forgot-password", {
+    email: email
+  });
+
+  return response.data;
+};
+
+// Reset password using the email token
+export const resetPassword = async (token, newPassword) => {
+  const response = await API.post("/auth/reset-password", {
+    token: token,
+    new_password: newPassword
+  });
+
+  return response.data;
+};
