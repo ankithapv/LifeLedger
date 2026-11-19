@@ -19,8 +19,10 @@ DB_PORT = int(os.getenv("DB_PORT", "3306"))
 DB_NAME = os.getenv("DB_NAME")
 
 # Read the certificate path (if provided)
-CA_PATH = os.getenv("CA_PATH")
-
+CA_PATH = os.getenv(
+    "CA_PATH",
+    str(BASE_DIR / "certs" / "isrgrootx1.pem")
+)
 # Configure secure connection when a CA certificate is provided
 connect_args = {}
 
